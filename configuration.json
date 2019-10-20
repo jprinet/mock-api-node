@@ -1,0 +1,8 @@
+{
+  "serverPort": 8001,
+  "paths": [
+    {
+      "name": "hello/world"
+    }
+  ]
+}

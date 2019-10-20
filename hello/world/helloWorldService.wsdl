@@ -18,12 +18,32 @@
             <input message = "tns:SayHelloRequest"/>
             <output message = "tns:SayHelloResponse"/>
         </operation>
+        <operation name = "sayDynamicHello">
+            <input message = "tns:SayHelloRequest"/>
+            <output message = "tns:SayHelloResponse"/>
+        </operation>
     </portType>
 
     <binding name = "HelloBinding" type = "tns:HelloPortType">
         <soap:binding style = "rpc" transport = "http://schemas.xmlsoap.org/soap/http"/>
         <operation name = "sayHello">
             <soap:operation soapAction = "sayHello"/>
+            <input>
+                <soap:body
+                        encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/"
+                        namespace = "urn:hello:helloWorldService"
+                        use = "encoded"/>
+            </input>
+
+            <output>
+                <soap:body
+                        encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/"
+                        namespace = "urn:hello:helloWorldService"
+                        use = "encoded"/>
+            </output>
+        </operation>
+        <operation name = "sayDynamicHello">
+            <soap:operation soapAction = "sayDynamicHello"/>
             <input>
                 <soap:body
                         encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/"

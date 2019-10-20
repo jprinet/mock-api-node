@@ -1,11 +1,12 @@
 # mock-soap
 
-Mount a nodeJS server (express) with node-soap https://github.com/vpulim/node-soap in order to mock SOAP API(s).
-The server listens on port **8001**.
+Mount a nodeJS mock server (express) with node-soap (https://github.com/vpulim/node-soap) to fake third party APIs.
+
+The server listens on port **8001** (configurable in configuration.json).
 
 ## Prerequisites
 
-- nodeJS v8 and later (ECMAScript 6)
+- nodeJS
 
 ## Run it!
 
@@ -23,7 +24,6 @@ npm start debug
 
 - create a *foobar* directory (*foobar* will be the context path for the API endpoint)
 - copy API wsdl and xsd in it
-- for each operation add a json file with the operation as filename containing the mocked response as json
 - if the wsdl contains an xsd:import directive, prefix the schema location with the current mocked server url
 ```xml
 <xsd:schema>
@@ -34,32 +34,40 @@ npm start debug
 ```xml
 <soap:address location="http://localhost:8001/foobar"/>
 ```
-- in *index.js*, add a *MockedSoapService* instance to the *mockedSoapServices* variable representing the *foobar API*
+- in *configuration.json*, add an entry to the paths array:
+```javascript
+{
+  "name": "foobar"
+} 
+````
+
+#### static mock
+
+add a json file with the operation as filename containing the mocked response as json
+
+#### dynamic mock
+
+add a js file with the operation as filename containing the javascript function and export it as operation
+```javascript
+const _operation = function() {
+    return {
+        "foo": "bar"
+    }
+};
+exports.operation = _operation;
+```
 
 ## How to add a response header?
 
-fill the *responseHeader* and *responseHeaderNamespace* parameters of the *MockedSoapService* constructor. 
-
-## How to add dynamic responses?
-
-- create - inside the API folder - a new module as follow:
-````javascript
-const dynamic = require('../../dynamic-service.js');
-
-dynamic.addDynamicService('myDynamicOperation', function() {
-    return {
-        myDynamicResult: {
-            myId: Math.floor(Math.random() * Math.floor(1000))
-        }
+in configuration.json, add an entry to paths array with the header definition:
+```javascript
+{
+  "name": "foobar",
+  "responseHeader": {
+    "namespace": "http://foobar.com/foobar",
+    "value": {
+      "foo": "bar"
     }
-});
-
-exports.operations =  function () {
-    return dynamic.operations;
-};
-````
-- fill the *dynamicOperationsModule* parameter of the *MockedSoapService* constructor with the name of the previously created module.
-
-## TODO
-
-- Error handling
+  }
+}
+```
