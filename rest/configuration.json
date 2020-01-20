@@ -1,0 +1,10 @@
+{
+  "validationEnabled": false,
+  "serverPort": 8002,
+  "paths": [
+    {
+      "name": "hello",
+      "contextPath": "/hello"
+    }
+  ]
+}

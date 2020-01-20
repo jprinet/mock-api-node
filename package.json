@@ -14,6 +14,7 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "soap": "^0.29.0",
-    "xml-js": "^1.6.11"
+    "xml-js": "^1.6.11",
+    "swagger-express-middleware": "^2.0.4"
   }
 }

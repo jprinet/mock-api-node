@@ -1,8 +1,14 @@
-# mock-soap
+# mock-api-node
 
-Mount a nodeJS mock server (express) with node-soap (https://github.com/vpulim/node-soap) to fake third party APIs.
+This project is written in Node.js with express (https://expressjs.com/) and aims to mock SOAP and REST APIs.
 
-The server listens on port **8001** (configurable in configuration.json).
+2 servers are mounted: 
+- one with **node-soap** https://github.com/vpulim/node-soap to mock SOAP APIs
+- the other with **swagger-express-middleware** (https://apitools.dev/swagger-express-middleware/) to mock REST APIs
+
+The project is able to consume an API descriptor (yaml, wsdl), all you need to do then is to create your mocked responses as JSON files (static) or JS files (dynamic). 
+
+By default, Soap server listens on port **8001** and REST server on port **8002** (configurable in configuration.json).
 
 ## Prerequisites
 
@@ -20,7 +26,11 @@ npm start
 npm start debug
 ````
 
-## How to mock a new foobar API?
+## SOAP server
+
+all paths/files referred to in this section are in the **soap** subfolder.
+
+### How to mock a new foobar API?
 
 - create a *foobar* directory (*foobar* will be the context path for the API endpoint)
 - copy API wsdl and xsd in it
@@ -35,7 +45,7 @@ npm start debug
 <soap:address location="http://localhost:8001/foobar"/>
 ```
 - in *configuration.json*, add an entry to the paths array:
-```javascript
+```json
 {
   "name": "foobar"
 } 
@@ -57,10 +67,10 @@ const _operation = function() {
 exports.operation = _operation;
 ```
 
-## How to add a response header?
+### How to add a response header?
 
 in configuration.json, add an entry to paths array with the header definition:
-```javascript
+```json
 {
   "name": "foobar",
   "responseHeader": {
@@ -71,3 +81,46 @@ in configuration.json, add an entry to paths array with the header definition:
   }
 }
 ```
+
+## REST Server
+
+all paths/files referred to in this section are in the **rest** subfolder.
+
+### How to mock a new foobar API?
+
+- create a *foobar* directory (*foobar* will be the context path for the API endpoint)
+- copy API yaml in it
+- in *configuration.json*, add an entry to the paths array:
+```json
+{
+  "name": "foobar",
+  "descriptor": "foobar.yaml"
+} 
+````
+
+#### static mock
+
+add a json file with the HTTP verb as filename (ie. **get.json**) containing the mocked response as json. 
+
+The directory structure represents the context path of the resource.
+
+#### dynamic mock
+
+add a js file with the HTTP verb as filename (ie. **get.js**) containing the javascript function and export it as operation
+```javascript
+const _operation = function(req, resp, next) {
+    resp.statusCode = 200;
+    const responseAsJson = {
+        hello: req.params.id
+    };
+    resp.json(responseAsJson);
+    next();
+};
+
+exports.operation = _operation;
+```
+
+### How to handle dynamic parameters?
+
+the folder structure may contains some __foo folders which will be converted as dynamic parameters. The value could be obtained in the callback as **req.params.foo** 
+

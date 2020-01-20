@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:12
 MAINTAINER Jerome Prinet
 
 USER node
@@ -6,14 +6,10 @@ USER node
 WORKDIR /home/node
 
 COPY package*.json ./
-RUN npm install
-
 COPY index.js .
-COPY configuration.json .
+COPY rest/ rest
+COPY soap/ soap
 
-RUN mkdir -p hello/world
-COPY hello/world/* hello/world/
-
-EXPOSE 8001
+RUN npm install
 
 CMD [ "node", "index.js" ]
